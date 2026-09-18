@@ -36,3 +36,8 @@ def test_no_rollout_note_above_threshold():
 def test_note_only_applies_to_2026_09():
     bundle = dict(BASE, runtime="computer/2026.07", kernel="6.1.100")
     assert all(k != "note" for k, _ in render.rows(bundle))
+
+
+def test_untagged_image_treated_as_rollout():
+    bundle = dict(BASE, runtime="computer/unknown", kernel="6.1.141")
+    assert ("note", "kernel predates the 2026.09 rollout") in render.rows(bundle)

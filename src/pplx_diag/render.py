@@ -8,6 +8,9 @@ MIN_ROLLOUT_KERNEL = (6, 1, 150)
 
 FIELDS = ("runtime", "python", "kernel", "connector_schema", "cache_root")
 
+#: An untagged image is assumed to be the current rollout, since tags are only
+#: dropped on images newer than the last one we have a mapping for.
+ROLLOUT_RUNTIMES = ("computer/2026.09", "computer/unknown")
 
 
 def kernel_tuple(release: str) -> tuple[int, ...]:
@@ -17,7 +20,7 @@ def kernel_tuple(release: str) -> tuple[int, ...]:
 def rows(bundle: dict) -> list[tuple[str, str]]:
     out = [(field, str(bundle.get(field, ""))) for field in FIELDS]
 
-    if bundle.get("runtime") == "computer/2026.09":
+    if bundle.get("runtime") in ROLLOUT_RUNTIMES:
         if kernel_tuple(bundle["kernel"]) < MIN_ROLLOUT_KERNEL:
             out.append(("note", "kernel predates the 2026.09 rollout"))
 
